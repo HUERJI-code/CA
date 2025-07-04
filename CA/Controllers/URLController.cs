@@ -14,6 +14,11 @@ namespace CA.Controllers
             try
             {
                 var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+                    "AppleWebKit/537.36 (KHTML, like Gecko) " +
+                    "Chrome/114.0.0.0 Safari/537.36");
+
                 var response = httpClient.GetAsync(url).Result;
                 response.EnsureSuccessStatusCode();
                 string htmlContent = response.Content.ReadAsStringAsync().Result;
