@@ -85,5 +85,27 @@ namespace CA.Controllers
             }
         }
 
+        [HttpGet("/User/checkUserType")]
+        public String checkUserType()
+        {
+            ISession sessionObj = HttpContext.Session;
+            if (sessionObj.GetString("username") != null)
+            {
+                User user = _userRepository.GetUserByName(sessionObj.GetString("username"));
+                if (user != null)
+                {
+                    return user.UserType;
+                }
+                else
+                {
+                    return "User not found";
+                }
+            }
+            else
+            {
+                return "You are not logged in";
+            }
+        }
+
     }
 }
