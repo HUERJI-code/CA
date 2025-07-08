@@ -43,7 +43,7 @@ namespace CA.Repository
 
 
 
-        public String AddScore(String userId, String usertime)
+        public String AddScore(String userId, int usertime)
         {
             User user = _context.User.FirstOrDefault(u => u.Id == userId);
             if (user == null)

@@ -24,7 +24,7 @@ namespace CA.Controllers
             {
                 return "User not found";
             }
-            return _scoreRepository.AddScore(user.Id, addScore.Usertime);
+            return _scoreRepository.AddScore(user.Id, int.Parse(addScore.Usertime));
         }
 
         [HttpGet("/Score/GetScoreByUserId")]
@@ -52,7 +52,7 @@ namespace CA.Controllers
                 {
                     username = score.User.Username,
                     //username = "1",
-                    usertime = score.UserTime
+                    usertime = score.UserTime.ToString()
                 });
             }
             return rankings;

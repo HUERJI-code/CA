@@ -5,7 +5,7 @@ namespace CA.Models
     public class Score
     {
         public Score() { }
-        public Score(String userTime) 
+        public Score(int userTime) 
         { 
             Id = System.Guid.NewGuid().ToString();
             UserTime = userTime;
@@ -13,7 +13,7 @@ namespace CA.Models
 
         public String Id { get; set; }
 
-        public String UserTime { get; set; }
+        public int UserTime { get; set; }
 
         public string UserId { get; set; }
 
