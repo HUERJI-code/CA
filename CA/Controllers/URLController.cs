@@ -1,14 +1,16 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 
 namespace CA.Controllers
 {
     public class URLController : Controller
     {
         [HttpGet("/URL/getImageUrls")]
-
-        //testUrl:"https://localhost:7262/home/getUrls?url=https://stocksnap.io/"
-        public List<string> getUrgetImageUrls(string url)
+        public List<string> getImageUrls(string url)  // 修正了方法名（原方法名有笔误）
         {
             List<string> imageUrls = new List<string>();
             try
@@ -32,20 +34,45 @@ namespace CA.Controllers
                     foreach (var imgNode in imgNodes)
                     {
                         var srcAttribute = imgNode.GetAttributeValue("src", null);
-                        if (!string.IsNullOrEmpty(srcAttribute))
+                        if (string.IsNullOrEmpty(srcAttribute)) continue;
+
+                        // 排除SVG图片和Data URLs
+                        if (srcAttribute.StartsWith("data:", StringComparison.OrdinalIgnoreCase) ||
+                            srcAttribute.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        try
                         {
                             var absoluteUrl = new Uri(new Uri(url), srcAttribute).ToString();
-                            imageUrls.Add(absoluteUrl);
+
+                            // 二次检查绝对URL路径（防止相对路径绕过）
+                            if (!absoluteUrl.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imageUrls.Add(absoluteUrl);
+                            }
+                        }
+                        catch (UriFormatException)
+                        {
+                            // 忽略无效的URL格式
+                            continue;
                         }
                     }
                 }
+
+                // 返回结果处理
                 if (imageUrls.Count >= 20)
                 {
                     return imageUrls.Take(20).ToList();
                 }
+                else if (imageUrls.Count > 0)
+                {
+                    return imageUrls;
+                }
                 else
                 {
-                    return new List<string> { "Found only " + imageUrls.Count + " image(s); fewer than 20." };
+                    return new List<string> { "No valid images found (excluding SVGs)" };
                 }
             }
             catch (Exception ex)
@@ -54,6 +81,5 @@ namespace CA.Controllers
                 return new List<string> { "Error occurred: " + ex.Message };
             }
         }
-
     }
 }
