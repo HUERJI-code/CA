@@ -2,7 +2,7 @@
 {
     public class AddScore
     {
-        public String Id { get; set; }
+        public String UserName{ get; set; }
         public String Usertime { get; set; }
     }
 }

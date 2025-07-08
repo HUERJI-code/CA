@@ -7,17 +7,24 @@ namespace CA.Controllers
     public class ScoreController : Controller
     {
         private ScoreRepository _scoreRepository;
+        private UserRepository _userRepository;
 
-        public ScoreController(ScoreRepository scoreRepository)
+        public ScoreController(ScoreRepository scoreRepository, UserRepository userRepository)
         {
             _scoreRepository = scoreRepository;
+            _userRepository = userRepository;
         }
 
         [HttpPost("/Score/AddScore")]
         public String AddScore([FromBody]AddScore addScore)
         {
-            Console.WriteLine(addScore.Id);
-            return _scoreRepository.AddScore(addScore.Id, addScore.Usertime);
+            Console.WriteLine(addScore.UserName);
+            User user = _userRepository.GetUserByName(addScore.UserName);
+            if (user == null)
+            {
+                return "User not found";
+            }
+            return _scoreRepository.AddScore(user.Id, addScore.Usertime);
         }
 
         [HttpGet("/Score/GetScoreByUserId")]
